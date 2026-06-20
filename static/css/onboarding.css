@@ -1,0 +1,129 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: row; 
+}
+
+/* User Styles */
+
+.heading{
+    position: absolute; 
+    top: 25px;         
+    right: 35px;       
+    color: #2e8b57;    
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: none; 
+}
+
+
+.left-pane {
+    width: 35%; 
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    background-color: #ffffff;
+    border-right: 2px solid #e0e0e0; 
+}
+.right-pane {
+    width: 65%; 
+    background-image: url('/static/images/trek-front.jpg');
+    background-size: cover; 
+    background-position: center; 
+}
+
+/* Staff Styles */
+
+.staff_right-pane {
+    width: 35%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border-right: 2px solid #e0e0e0;
+}
+.staff_left-pane {
+    width: 65%;
+    background-image: url('/static/images/trekk-front.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.staff_heading {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    color: #2e8b57;
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+}
+
+.form-container h1 {
+    text-align: left; 
+    color: #333;
+    margin-bottom: 50px;
+    font-size: 40px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: 600;
+}
+
+form select,
+form input[type="text"],
+form input[type="password"],
+form input[type="email"],
+form input[type="date"] {
+    width: 80%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+form input[type="radio"] {
+    width: auto;            
+    display: inline-block;   
+    margin-right: 5px;       
+    margin-bottom: 20px;    
+}
+
+form input[type="radio"] + label {
+    display: inline-block;   
+    margin-right: 20px;     
+    font-weight: normal;    
+    margin-bottom: 20px;
+}
+
+form input[type="submit"] {
+    width: 85%;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #2e9d5e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+form input[type="submit"]:hover {
+    background-color: #1f5d3a;
+}

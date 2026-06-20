@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sign In</title>
+        <link rel="stylesheet" href="/static/css/onboarding.css">
+    </head>
+    <body>
+        {% if user == "staff" %}
+            <div class="staff_left-pane"></div>
+            <div class="staff_right-pane">
+                <a href= "/" class="staff_heading"> < User login here </a>
+                <div class="form-container">
+                    <h1>Welcome Back !</h1>
+                    <form action="/staff_login" method="post">
+                        <label for="email">Staff Mail:</label>
+                        <input type="text" id="email" name="email" required>
+                        <br>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                        <br>
+                        <input type="submit" value="Sign In">
+                    </form>
+                    <p>{{ msg }}</p>
+                    <p>Not a Staff ? <a href = "/staff_apply">Apply now !</a></p>
+                </div>
+            </div>
+        {% elif user == "user" %}
+            <div class="left-pane">
+                <a href= "/staff_login" class="heading">Staff login here ></a>
+                <div class="form-container">
+                    <h1>Welcome Back !</h1>
+                    <form action="/" method="post">
+                        <label for="email">Email:</label>
+                        <input type="text" id="email" name="email" required>
+                        <br>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                        <br>
+                        <input type="submit" value="Sign In">
+                    </form>
+                    <p>{{ msg }}</p>
+                    <p>Don't have an Account ? <a href = "/signup">Create one now !</a></p>
+                </div>
+            </div>
+            <div class="right-pane"></div>
+        
+        {% elif user == "new_user" %}
+            <div class="left-pane">
+                <a href= "/staff_login" class="heading"> Staff login here > </a>
+                <div class="form-container">
+                    <h1>Welcome !</h1>
+                    <form action="/signup" method="post">
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" name="name" required>
+                        <br>
+                        <label for="gender">Gender:</label>
+                        <input type="radio" id="male" name="gender" value="male" required>
+                        <label for="male">Male</label>
+                        <input type="radio" id="female" name="gender" value="female" required>
+                        <label for="female">Female</label>
+                        <input type="radio" id="other" name="gender" value="other" required>
+                        <label for="other">Other</label>
+                        <br>
+                        <label for="dob">Date of Birth:</label>
+                        <input type="date" id="dob" name="dob" required>
+                        <br>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                        <br>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                        <br>
+                        <input type="submit" value="Sign Up">
+                    </form>
+                    <p>{{ msg }}</p>
+                    <p>Already have an Account ? <a href = "/">Sign in now !</a></p>
+                </div>
+            </div>
+            <div class="right-pane"></div>
+        
+        {% elif user == "new_staff" %}
+            <div class="staff_left-pane"></div>
+
+             <div class="staff_right-pane">
+                <a href= "/" class="staff_heading">< User login here </a>
+                <div class="form-container">
+                    <h1>Fill this form to Apply !</h1>
+                    <form action="/staff_apply" method="post">
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" name="name" required>
+                        <br>
+                        <label for="gender">Gender:</label>
+                        <input type="radio" id="male" name="gender" value="male" required>
+                        <label for="male">Male</label>
+                        <input type="radio" id="female" name="gender" value="female" required>
+                        <label for="female">Female</label>
+                        <input type="radio" id="other" name="gender" value="other" required>
+                        <label for="other">Other</label>
+                        <br>
+                        <label for="dob">Date of Birth:</label>
+                        <input type="date" id="dob" name="dob" required>
+                        <br>
+                        <label for="m_no.">Mobile number:</label>
+                        <input type="text" id="m_no." name="m_no." required>
+                        <br>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                        <br>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                        <br>
+                        <input type="submit" value="Apply">
+                    </form>
+                    <p>{{ msg }}</p>
+                    <p>Already have an Account ? <a href = "/staff_login">Sign in now !</a></p>
+                </div>
+            </div>
+        {% endif %}
+    </body>
+</html>
