@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% block content %}
+    </header>
+    {% if func == 'staff' %}
+        <main>
+            <section>
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Active Trek Staffs: </h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile No.</th>
+                                <th>Speciality</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if active_staffs %}
+                                {% for staff in active_staffs %}
+                                <tr>
+                                    <td>{{ staff.staff_profile.id }}</td>
+                                    <td>{{ staff.name }}</td>
+                                    <td>{{ staff.email }}</td>
+                                    <td>{{ staff.m_no }}</td>
+                                    <td>{{ staff.staff_profile.speciality }}</td>
+                                    <td>{{ staff.staff_profile.status }}</td>
+                                    <td>
+                                        <form action="{{ url_for('blacklist', user_id=staff.user_id) }}" method="POST" style="display:inline-block; margin-right: 5px;">
+                                            <button type="submit" class="action-btn btn-blacklist">Blacklist</button>
+                                        </form>
+
+                                        <form action="{{ url_for('fire_staff', staff_id=staff.user_id) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="action-btn btn-fire">Fire</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7">No active staff !</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+            </section>
+            <section>
+            {% if pending_staffs %}
+
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Pending Staff Approvals:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile No.</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for staff in pending_staffs %}
+                                <tr>
+                                    <td>{{ staff.user_id }}</td>
+                                    <td>{{ staff.name }}</td>
+                                    <td>{{ staff.email }}</td>
+                                    <td>{{ staff.m_no }}</td>
+                                    <td>
+                                        <form action="{{ url_for('approve', staff_id=staff.user_id) }}" method="POST" style="display:inline-block; margin-right: 10px;">
+                                            <select id="speciality" name="speciality" required>
+                                                <option value="Lead Guide">Lead Guide</option>
+                                                <option value="Assistant Guide">Assistant Guide</option>
+                                                <option value="Wilderness Medic">Medic</option>
+                                                <option value="Camp Manager">Camp Manager</option>
+                                                <option value="Expedition Cook">Expedition Cook</option>
+                                            </select>
+                                            <button type="submit" class="action-btn btn-unblacklist">Approve</button>
+                                        </form>
+
+                                        <form action="{{ url_for('fire_staff', staff_id=staff.user_id) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="action-btn btn-fire">Reject</button>
+                                        </form>
+                                    </td>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
+            </section>
+            <section>
+            {% if blacklisted_staffs %}
+
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Blacklisted Staffs:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile No.</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for staff in blacklisted_staffs %}
+                                <tr>
+                                    <td>{{ staff.user_id }}</td>
+                                    <td>{{ staff.name }}</td>
+                                    <td>{{ staff.email }}</td>
+                                    <td>{{ staff.m_no }}</td>
+                                    <td>
+                                        <form action="{{ url_for('unblacklist', user_id=staff.user_id) }}" method="POST" style="display:inline-block; margin-right: 10px;">
+                                            <select id="speciality" name="speciality" required>
+                                                <option value="Lead Guide">Lead Guide</option>
+                                                <option value="Assistant Guide">Assistant Guide</option>
+                                                <option value="Wilderness Medic">Medic</option>
+                                                <option value="Camp Manager">Camp Manager</option>
+                                                <option value="Expedition Cook">Expedition Cook</option>
+                                            </select>
+                                            <button type="submit" class="action-btn btn-unblacklist">Unblacklist</button>
+                                        </form>
+
+                                        <form action="{{ url_for('fire_staff', staff_id=staff.user_id) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="action-btn btn-fire">Reject</button>
+                                        </form>
+                                    </td>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
+            </section>
+        </main>
+    {% elif func == 'user' %}
+        <main>
+            <section>
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Active Trekkers: </h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile No.</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if active_users %}
+                                {% for user in active_users %}
+                                <tr>
+                                    <td>{{ user.user_id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.m_no }}</td>
+                                    <td>
+                                        <form action="{{ url_for('blacklist', user_id=user.user_id) }}" method="POST" style="display:inline-block; margin-right: 5px;">
+                                            <button type="submit" class="action-btn btn-blacklist">Blacklist</button>
+                                        </form>
+
+                                        <form action="{{ url_for('fire_staff', staff_id=user.user_id) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="action-btn btn-fire">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7">No active trekkers!</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+            </section>
+            <section>
+            {% if blacklisted %}
+
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Blacklisted trekkers:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile No.</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in blacklisted %}
+                                <tr>
+                                    <td>{{ user.user_id }}</td>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.m_no }}</td>
+                                    <td>
+                                        <form action="{{ url_for('unblacklist', user_id=user.user_id) }}" method="POST" style="display:inline-block; margin-right: 10px;">
+                                            <button type="submit" class="action-btn btn-unblacklist">Unblacklist</button>
+                                        </form>
+
+                                        <form action="{{ url_for('fire_staff', staff_id=user.user_id) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="action-btn btn-fire">Remove</button>
+                                        </form>
+                                    </td>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            {% endif %}
+            </section>
+        </main>
+    {% elif func == 'trek' %}
+        <main>
+            <section>
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Active Treks:</h2>
+                {% if active_treks %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Difficulty</th>
+                                <th>Duration</th>
+                                <th>Available Slots</th>
+                                <th>Assigned Staffs</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trek in active_treks %}
+                                <tr>
+                                    <td>{{ trek.id }}</td>
+                                    <td><b>{{ trek.trek_name }}</b></td>
+                                    <td>{{ trek.location }}</td>
+                                    <td>{{ trek.difficulty }}</td>
+                                    <td>{{ trek.duration }}</td>
+                                    <td>{{ trek.available_slots }}</td>
+                                    <td>{{ trek.staff_profile.user.name }}</td>
+                                    <td>
+                                        <form action="{{ url_for('edit_trek', trek_id=trek.id) }}" method="GET" style="display:inline-block; margin-right: 10px;">
+                                            <button type="submit" class="action-btn btn-blacklist">Edit</button>
+                                        </form>
+
+                                        <form action="{{ url_for('delete_trek', trek_id=trek.id) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="action-btn btn-fire">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{{ url_for('add_trek') }}" style="display:inline-block; margin-top: 10px; background-color: rgb(4, 73, 4); color: white; padding: 5px 10px; text-decoration: none;">+ Add more Treks</a>
+                {% else %}
+                    <p>No active treks available.</p>
+                    <a href="{{ url_for('add_trek') }}" style="display:inline-block; margin-top: 10px; background-color: rgb(4, 73, 4); color: white; padding: 5px 10px; text-decoration: none;">+ Add a Trek</a>
+                {% endif %}
+                {% if completed_treks %}
+                    <h2 style="margin-bottom: 25px; color: #1e5c45;">Completed Treks:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Difficulty</th>
+                                <th>Duration</th>
+                                <th>Available Slots</th>
+                                <th>Assigned Staffs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trek in completed_treks %}
+                                <tr>
+                                    <td>{{ trek.id }}</td>
+                                    <td>{{ trek.name }}</td>
+                                    <td>{{ trek.location }}</td>
+                                    <td>{{ trek.difficulty }}</td>
+                                    <td>{{ trek.duration }}</td>
+                                    <td>{{ trek.available_slots }}</td>
+                                    <td>{{ trek.assigned_staff_id }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </section>
+        </main>
+    {% else %}
+        <div class="dashboard-layout">
+        
+        <div class="chart-card">
+            <div style="text-align: center;">
+                <h3>System Overview</h3>
+                <p style="color: gray; margin-top: 20px;">[ Will be added soon.... ]</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            
+            <div class="stat-card">
+                <h3>Total Staff</h3>
+                <div class="stat-number">{{ total_staff }}</div> 
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="stat-number">{{ total_users }}</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Active Treks</h3>
+                <div class="stat-number">{{ active_treks }}</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Bookings</h3>
+                <div class="stat-number">24</div>
+            </div>
+
+        </div>
+
+        </div>
+    {% endif %}
+{% endblock %}

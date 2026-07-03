@@ -1,0 +1,225 @@
+/* --- Global Reset & Base --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #b5e8db; 
+    color: #2c3e50; 
+}
+
+.content-container {
+    padding: 30px 40px; 
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* --- The Navigation Bar --- */
+.navbar {
+    display: flex;
+    background-color: #ffffff;
+    border-bottom: 3px solid #1e5c45
+}
+
+.nav-brand {
+    padding: 15px 20px;
+    margin-right: 1000px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.nav-links {
+    display: flex;
+}
+
+.nav-links a {
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #000;
+    
+    transition: background-color 0.2s;
+}
+
+.nav-links a:hover {
+    background-color: #9dd896;
+}
+
+/* --- The Dashboard Layout --- */
+.dashboard-layout {
+    display: flex;
+    gap: 30px; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    margin-top: 60px;
+}
+
+
+/* The Pie Chart Box */
+.chart-card {
+    flex: 1; 
+    background-color: #fff;
+    border: 3px solid #93a4b7;
+    padding: 20px;
+    min-height: 600px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats-grid {
+    flex: 1; 
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    grid-template-rows: 1fr 1fr;    
+    gap: 30px; 
+}
+
+/* The Individual KPI Cards */
+.stat-card {
+    background-color: #fff;
+    border: 3px solid #2e2020;
+    border-radius: 15px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.stat-card h3 {
+    font-size: 1.2rem;
+    color: #504545;
+    margin-bottom: 10px;
+}
+
+.stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #d97736;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    margin-bottom: 40px;
+    margin-left: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+
+/* Table Headers */
+th {
+    background-color: #1e5c45; 
+    color: #ffffff;
+    text-align: left;
+    padding: 15px;
+    font-weight: bold;
+}
+
+/* Table Cells */
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e0e6ed; 
+    color: #2c3e50;
+    vertical-align: middle;
+}
+
+/* Row Hover Effect */
+tr:hover {
+    background-color: #f8faf9; 
+}
+
+/* --- Action Buttons --- */
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    transition: background-color 0.2s; 
+}
+
+.btn-blacklist {
+    background-color: #d97736; 
+}
+
+.btn-blacklist:hover {
+    background-color: #c5662b; 
+}
+
+.btn-unblacklist {
+    background-color: #62af4a; 
+}
+
+.btn-unblacklist:hover {
+    background-color: #32941b; 
+}
+
+.btn-fire {
+    background-color: #e74c3c; 
+}
+
+.btn-fire:hover {
+    background-color: #ca2917; 
+}
+
+
+/* --- Master Form Styling --- */
+.form-card {
+    background-color: #ffffff;
+    border: 2px solid #dce0e5;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 800px; 
+    margin-bottom: 40px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block; 
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd1d9;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #333;
+    transition: border-color 0.2s,
+}
+
+
+
+
+/* Primary Action Button */
+.btn-primary {
+    background-color: #1e5c45;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%; 
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #164232;
+}

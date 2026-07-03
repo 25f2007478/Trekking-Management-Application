@@ -21,31 +21,31 @@ class User(db.Model):
     staff_profile = db.relationship('StaffProfile', backref='user', uselist=False)
     # 2. User <-> Booking (One-to-Many)
     bookings = db.relationship('Booking', backref='user')
-    # 3. Trek Staff <-> Trek (One-to-Many)
-    assigned_treks = db.relationship('Trek', backref='user')
 
 class StaffProfile(db.Model):
     __tablename__ = 'staff_profiles'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False, unique=True)
-    
-    specialty = db.Column(db.String(50), nullable=True) 
-    experience_years = db.Column(db.Integer, nullable=True)
+    speciality = db.Column(db.String(50), nullable=True) 
+    status = db.Column(db.String(20), default='Available') 
 
     # --- RELATIONSHIPS --- 
     # Trek Staff <-> Trek (One-to-Many)
     assigned_treks = db.relationship('Trek', backref='staff_profile')
+
     
 class Trek(db.Model):
     __tablename__ = 'treks'
     
     id = db.Column(db.Integer, primary_key=True)
     trek_name = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(50), nullable=False)
     difficulty = db.Column(db.String(20), nullable=False) 
     duration = db.Column(db.Integer, nullable=False)
     available_slots = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String(20), default='Pending') 
+    status = db.Column(db.String(20), default='Open') 
+    img = db.Column(db.String(100), unique=True, nullable=False)
     assigned_staff_id = db.Column(db.Integer, db.ForeignKey('staff_profiles.id'), nullable=True)
     
     # --- RELATIONSHIPS ---
@@ -62,3 +62,5 @@ class Booking(db.Model):
     booking_status = db.Column(db.String(20), default='Confirmed') 
     payment_status = db.Column(db.String(20), default='Pending') 
     booking_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    
