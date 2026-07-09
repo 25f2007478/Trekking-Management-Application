@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "base_admin.html" %}
 {% block content %}
-    </header>
+
     {% if func == 'staff' %}
         <main>
             <section>
@@ -39,9 +39,10 @@
                                 </tr>
                                 {% endfor %}
                             {% else %}
-                                <tr>
-                                    <td colspan="7">No active staff !</td>
-                                </tr>
+                                <div class="empty-state-card">
+                                    <h3>No active Staff available !</h3><br>
+                                    <p>You currently do not have any active staff. Assign new staffs and they will appear right here.</p>
+                                </div>
                             {% endif %}
                         </tbody>
                     </table>
@@ -165,9 +166,10 @@
                                 </tr>
                                 {% endfor %}
                             {% else %}
-                                <tr>
-                                    <td colspan="7">No active trekkers!</td>
-                                </tr>
+                                <div class="empty-state-card">
+                                    <h3>No Active User Found !</h3><br>
+                                    <p>You currently do not have any active Users. When a new user Signup they will appear right here.</p>
+                                </div>
                             {% endif %}
                         </tbody>
                     </table>
@@ -220,7 +222,8 @@
                                 <th>Name</th>
                                 <th>Location</th>
                                 <th>Difficulty</th>
-                                <th>Duration</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
                                 <th>Available Slots</th>
                                 <th>Assigned Staffs</th>
                                 <th>Actions</th>
@@ -233,7 +236,8 @@
                                     <td><b>{{ trek.trek_name }}</b></td>
                                     <td>{{ trek.location }}</td>
                                     <td>{{ trek.difficulty }}</td>
-                                    <td>{{ trek.duration }}</td>
+                                    <td>{{ trek.start_date }}</td>
+                                    <td>{{ trek.end_date }}</td>
                                     <td>{{ trek.available_slots }}</td>
                                     <td>{{ trek.staff_profile.user.name }}</td>
                                     <td>
@@ -251,9 +255,45 @@
                     </table>
                     <a href="{{ url_for('add_trek') }}" style="display:inline-block; margin-top: 10px; background-color: rgb(4, 73, 4); color: white; padding: 5px 10px; text-decoration: none;">+ Add more Treks</a>
                 {% else %}
-                    <p>No active treks available.</p>
-                    <a href="{{ url_for('add_trek') }}" style="display:inline-block; margin-top: 10px; background-color: rgb(4, 73, 4); color: white; padding: 5px 10px; text-decoration: none;">+ Add a Trek</a>
+                    <div class="empty-state-card">
+                        <h3>No Treks Opened yet !</h3><br>
+                        <p>No treks are Open right now. Create a new Adventure now !</p>
+                        <a href="{{ url_for('add_trek') }}" style="display:inline-block; margin-top: 10px; background-color: rgb(4, 73, 4); color: white; padding: 5px 10px; text-decoration: none;">+ Add a Trek</a>
+                    </div>
                 {% endif %}
+                <br><br>
+                {% if ongoing %}
+                    <h2 style="margin-bottom: 25px; color: #1e5c45;">Ongoing Treks:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Difficulty</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Available Slots</th>
+                                <th>Assigned Staffs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trek in ongoing %}
+                                <tr>
+                                    <td>{{ trek.id }}</td>
+                                    <td>{{ trek.trek_name }}</td>
+                                    <td>{{ trek.location }}</td>
+                                    <td>{{ trek.difficulty }}</td>
+                                    <td>{{ trek.start_date }}</td>
+                                    <td>{{ trek.end_date }}</td>
+                                    <td>{{ trek.available_slots }}</td>
+                                    <td>{{ trek.staff_profile.user.name }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                <br><br>
                 {% if completed_treks %}
                     <h2 style="margin-bottom: 25px; color: #1e5c45;">Completed Treks:</h2>
                     <table>
@@ -263,7 +303,8 @@
                                 <th>Name</th>
                                 <th>Location</th>
                                 <th>Difficulty</th>
-                                <th>Duration</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
                                 <th>Available Slots</th>
                                 <th>Assigned Staffs</th>
                             </tr>
@@ -272,12 +313,13 @@
                             {% for trek in completed_treks %}
                                 <tr>
                                     <td>{{ trek.id }}</td>
-                                    <td>{{ trek.name }}</td>
+                                    <td>{{ trek.trek_name }}</td>
                                     <td>{{ trek.location }}</td>
                                     <td>{{ trek.difficulty }}</td>
-                                    <td>{{ trek.duration }}</td>
+                                    <td>{{ trek.start_date }}</td>
+                                    <td>{{ trek.end_date }}</td>
                                     <td>{{ trek.available_slots }}</td>
-                                    <td>{{ trek.assigned_staff_id }}</td>
+                                    <td>{{ trek.staff_profile.user.name }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

@@ -1,0 +1,239 @@
+{% extends "base_staff.html" %}
+{% block content %}
+
+{% if func == 'trek'%}
+<main>
+    {% if trek.status != 'Completed' %}
+        <div class="staff-trek-card">
+        <div class="trek-image-box">
+            <img src={{ trek.img }} alt="Trek Image">
+        </div>
+        
+        <div class="trek-info-box">
+            <h1 class="trek-title">{{ trek.trek_name }}</h1>
+
+            <form action="{{ url_for('staff_treks', trek_id=trek.id) }}" method="POST">
+                <div class="info-grid">
+                    
+                    <div class="info-item">
+                        <label>Location</label>
+                        <div class="read-only-text">{{ trek.location }}</div>
+                    </div>
+                    <div class="info-item">
+                        <label>Difficulty</label>
+                        <div class="read-only-text">{{ trek.difficulty }}</div>
+                    </div>
+
+                    
+                    <div class="info-item">
+                        <label>Available Slots</label>
+                        <div class="input-group">
+                            <input type="number" name="available_slots" class="form-control" style="width: 60%;" value="{{ trek.available_slots }}" min="0">
+                            <button type="submit" name="action" value="UpdateSlots" class="btn-action btn-update">Update Slots</button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label>Current Status</label>
+                        <div class="read-only-text status-badge">{{ trek.status }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Start Date</label>
+                        <div class="read-only-text">{{ trek.start_date }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>End Date</label>
+                        <div class="read-only-text">{{ trek.end_date }}</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    {% if trek.status != 'Ongoing' and trek.status != 'Completed' %}
+                        <button type="submit" name="action" value="Start" class="btn-action btn-start">Start</button>
+                    {% elif trek.status != 'Completed' %}
+                        <button type="submit" name="action" value="Complete" class="btn-action btn-complete">Complete</button>
+                    {% else %}
+                        <button type="button" class="btn-action btn-complete" disabled>Completed</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        </div>
+    {% else %}
+    <div class="empty-state-card">
+        <h3>No Treks Assigned yet !</h3><br>
+        <p>You currently do not have any active treks assigned to you. When the Admin assigns you to a new adventure, it will appear right here.</p>
+    </div>
+    {% endif %}
+</main>
+
+{% elif func == 'history' %}
+    <main>
+    {% if trek_hist %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Available Slots</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trek in trek_hist%}
+                <tr>
+                    <td>{{ trek.id }}</td>
+                    <td>{{ trek.trek_name }}</td>
+                    <td>{{ trek.location }}</td>
+                    <td>{{ trek.difficulty }}</td>
+                    <td>{{ trek.start_date }}</td>
+                    <td>{{ trek.end_date }}</td>
+                    <td>{{ trek.available_slots }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state-card">
+        <h3>No Trek History Available</h3><br>
+        <p>You have not completed any treks yet. Once you complete a trek, it will appear here.</p>
+    </div>
+    {% endif %}
+    </main>
+
+{% elif func == 'participants' %}
+    <main>
+    {% if bookings %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Date of Birth</th>
+                <th>E-Mail</th>
+                <th>Mobile</th>
+                <th>Booking ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.user.id }}</td>
+                    <td>{{ booking.user.name }}</td>
+                    <td>{{ booking.user.gender }}</td>
+                    <td>{{ booking.user.date_of_birth }}</td>
+                    <td>{{ booking.user.email }}</td>
+                    <td>{{ booking.user.mobile }}</td>
+                    <td>{{ booking.id }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state-card">
+        <h3>No Bookings Found</h3><br>
+        <p>No bookings for your active trek has been found. Once a user books for this trek, it will appear here.</p>
+    </div>
+    {% endif %}
+    </main>
+
+{% elif func == 'Profile' %}
+    <main>
+        <div class="profile-card">
+            <h2>Your Profile</h2>
+
+            <div class="profile-details-grid">
+                <div class="profile-item">
+                    <label>Name</label>
+                    <div class="profile-value">{{ current_user.name }}</div>
+                </div>
+
+                <div class="profile-item">
+                    <label>Email</label>
+                    <div class="profile-value">{{ current_user.email }}</div>
+                </div>
+
+                <div class="profile-item">
+                    <label>Password</label>
+                    <div class="profile-value">••••••••</div> 
+                </div>
+
+                <div class="profile-item">
+                    <label>Gender</label>
+                    <div class="profile-value">{{ current_user.gender | capitalize }}</div>
+                </div>
+
+                <div class="profile-item">
+                    <label>Mobile</label>
+                    <div class="profile-value">
+                        {% if current_user.m_no %}
+                            {{ current_user.m_no }}
+                        {% else %}
+                            <span style="color: #95a5a6; font-style: italic;">Not Provided</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="profile-item">
+                    <label>Date of Birth</label>
+                    <div class="profile-value">{{ current_user.dob }}</div>
+                </div>
+
+                <div class="profile-item">
+                    <label>Speciality</label>
+                    <div class="profile-value">{{ current_user.staff_profile.speciality }}</div>
+                </div>
+
+                <div class="profile-item">
+                    <label>Status</label>
+                    <div class="profile-value">{{ current_user.staff_profile.status }}</div>
+                </div>
+            </div>
+
+            <a href="{{ url_for('edit_profile') }}" class="btn-edit-profile">Edit Profile</a>
+        </div>
+    </main>
+{% else %}
+     <div class="dashboard-layout">
+        
+        <div class="chart-card">
+            <div style="text-align: center;">
+                <h3>System Overview</h3>
+                <p style="color: gray; margin-top: 20px;">[ Will be added soon.... ]</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            
+            <div class="stat-card">
+                <h3>Total Treks Completed</h3>
+                <div class="stat-number">{{ total_treks_completed }}</div> 
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Participants managed</h3>
+                <div class="stat-number">{{ total_participants_managed }}</div>
+            </div>
+
+            <!-- <div class="stat-card">
+                <h3>Active Treks</h3>
+                <div class="stat-number">{{ active_treks }}</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Bookings</h3>
+                <div class="stat-number">24</div>
+            </div> -->
+
+        </div>
+
+        </div>
+{% endif %}
+
+{% endblock %}

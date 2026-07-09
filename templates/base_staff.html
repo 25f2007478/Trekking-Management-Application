@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trekking App{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Welcome Staff !!</div>
+        <div class="nav-links">
+            <a href="{{ url_for('staff_home') }}">Home</a>
+            <a href="{{ url_for('staff_treks') }}">Assigned Treks</a>
+            <a href="{{ url_for('trek_history') }}">History</a>
+            <a href="{{ url_for('staff_users') }}">Participants</a>
+            <a href="{{ url_for('staff_profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            
+        </div>
+    </nav>
+
+    <main class="content-container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>
