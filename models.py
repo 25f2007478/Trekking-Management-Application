@@ -60,8 +60,7 @@ class Booking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     trek_id = db.Column(db.Integer, db.ForeignKey('treks.id'), nullable=False)
     
-    booking_status = db.Column(db.String(20), default='Confirmed') 
-    payment_status = db.Column(db.String(20), default='Pending') 
+    booking_status = db.Column(db.String(20), default='Pending') 
     booking_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     

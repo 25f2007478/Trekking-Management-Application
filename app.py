@@ -11,24 +11,28 @@ db.init_app(app)
 
 @app.route('/', methods=['GET','POST'])
 def user_login():
+
+    passed_msg = request.args.get('msg')
+
     if request.method == 'GET':
-        return render_template('onboarding.html', user='user')
+        return render_template('onboarding.html', user='user', msg=passed_msg)
     else:
         email = request.form.get('email')
         password = request.form.get('password') 
         curr_user = User.query.filter_by(email=email).first()
         
-        if curr_user.role == 'Admin':
-            if curr_user.password == password:
-                session['u_id'] = curr_user.user_id
-                return redirect(url_for('admin_home'))
             
         if curr_user:
+            if curr_user.role == 'Admin':
+                if curr_user.password == password:
+                    session['u_id'] = curr_user.user_id
+                    return redirect(url_for('admin_home'))
+                
             if curr_user.role != 'staff':
                 if curr_user.is_approved:
                     if curr_user.password == password:
                         session['u_id'] = curr_user.user_id
-                        return render_template('onboarding.html', user='user', msg='Redirecting')
+                        return redirect(url_for('user_home'))
                     else:
                         return render_template('onboarding.html', user='user', msg='Incorrect password !')
                 else:
@@ -48,13 +52,13 @@ def staff_login():
         email = request.form.get('email')
         password = request.form.get('password') 
         curr_user = User.query.filter_by(email=email).first()
-
-        if curr_user.role == 'Admin':
-            if curr_user.password == password:
-                session['u_id'] = curr_user.user_id
-                return redirect(url_for('admin_home'))
             
         if curr_user:
+            if curr_user.role == 'Admin':
+                if curr_user.password == password:
+                    session['u_id'] = curr_user.user_id
+                    return redirect(url_for('admin_home'))
+            
             if curr_user.role == 'staff':
                 if curr_user.is_approved:
                     if curr_user.password == password:
@@ -163,8 +167,11 @@ def admin_home():
     staff_num = User.query.filter_by(role='staff', is_approved=True).count()
     user_num = User.query.filter_by(role='trekker').count()
     trek_num = Trek.query.filter_by(status='Open').count()
+    booking_num = Booking.query.filter_by(booking_status='Confirmed').count()
 
-    return render_template('admin_dashboard.html',func='home', total_staff=staff_num, total_users=user_num, active_treks=trek_num)
+    recent_activity = Booking.query.order_by(Booking.id.desc()).limit(5).all()
+
+    return render_template('admin_dashboard.html',func='home', total_staff=staff_num, total_users=user_num, active_treks=trek_num, total_bookings=booking_num, recent_activity=recent_activity)
     
 
 @app.route('/admin_dashboard/staffs')                           
@@ -198,8 +205,9 @@ def admin_trek():
     active_treks = Trek.query.filter_by(status='Open').all()
     ongoing_treks = Trek.query.filter_by(status='Ongoing').all()
     completed_treks = Trek.query.filter_by(status='Completed').all()
+    cancelled_treks = Trek.query.filter_by(status='Cancelled').all()
 
-    return render_template('admin_dashboard.html', func='trek', active_treks=active_treks, completed_treks=completed_treks, ongoing=ongoing_treks)
+    return render_template('admin_dashboard.html', func='trek', active_treks=active_treks, cancelled_treks=cancelled_treks, completed_treks=completed_treks, ongoing=ongoing_treks)
 
 @app.route('/approve/<int:staff_id>', methods=['POST'])
 def approve(staff_id):
@@ -381,10 +389,21 @@ def delete_trek(trek_id):
     if curr_staff:
         curr_staff.status = 'Available'
 
-    db.session.delete(curr_trek)
+    curr_trek.status = 'Cancelled'
+
     db.session.commit()
 
     return redirect(url_for('admin_trek'))
+
+@app.route('/admin_dashboard/bookings')
+def admin_booking():
+    u_id = session.get('u_id')
+    if isadmin(u_id):
+        return redirect(url_for('user_login', msg='Unauthorised access !'))
+    
+    bookings = Booking.query.all()
+    
+    return render_template('admin_dashboard.html', func='bookings', bookings=bookings)
 
 
 #--------STAFF FUNCTIONALITIES--------#
@@ -401,9 +420,14 @@ def staff_home():
     participants = 0
     for trek in assigned_treks:
         participants += Booking.query.filter_by(trek_id=trek.id).count()
+
+    next_trek = Trek.query.filter(
+        Trek.assigned_staff_id == staff.id,
+        Trek.status.in_(['Open', 'Ongoing'])
+    ).first()
     
 
-    return render_template('staff_dashboard.html', total_treks_completed=completed_treks, total_participants_managed=participants)
+    return render_template('staff_dashboard.html', total_treks_completed=completed_treks, total_participants_managed=participants, next_trek=next_trek)
 
 @app.route('/staff_dashboard/treks', methods=['GET','POST'])
 def staff_treks():
@@ -488,7 +512,7 @@ def edit_profile():
         if user.role == 'staff':
             return render_template('edit-profile.html', role='base_staff.html', user=user)
         else:
-            return render_template('edit-profile.html', role='base_trekker.html', user=user)
+            return render_template('edit-profile.html', role='base_user.html', user=user)
         
     else:
         user.name = request.form.get('name')
@@ -505,10 +529,130 @@ def edit_profile():
         
         return redirect(url_for('user_profile'))
         
+
+#--------USER FUNCTIONALITIES--------#
+
+@app.route('/user_dashboard')
+def user_home():
+    u_id = session.get('u_id',None)
+    if u_id is None:
+        return redirect(url_for('user_login', msg='Unauthorised access !')) 
     
+    bookings = Booking.query.filter_by(user_id=u_id, booking_status='Confirmed').all()
+    com_trek = 0
+    for book in bookings:
+
+        if book.trek.status == 'Completed':
+            com_trek += 1
+    
+    total_booking = Booking.query.filter_by(user_id=u_id, booking_status='Confirmed').count() 
+    pending_booking = Booking.query.filter_by(user_id=u_id, booking_status='Pending').count()
+    ongoing_treks= Trek.query.filter_by(status='Open').count()
+
+    return render_template('user_dashboard.html', total_treks=com_trek, total_bookings=total_booking, pending_bookings=pending_booking, bookings=bookings, ongoing_treks=ongoing_treks)
+
+@app.route('/user/treks', methods=['GET','POST'])
+def user_treks():
+    u_id = session.get('u_id',None)
+    if u_id is None:
+        return redirect(url_for('user_login', msg='Unauthorised access !')) 
+
+    if request.method == 'GET':
+        treks = Trek.query.filter_by(status='Open').all()
+
+        passed_msg = request.args.get('msg')
+                
+        return render_template('user_dashboard.html', func='open_trek', treks=treks, msg=passed_msg)
+
+@app.route('/trek/book/<int:trek_id>', methods=['POST'])
+def book_treks(trek_id):
+    u_id = session.get('u_id',None)
+    if u_id is None:
+        return redirect(url_for('user_login', msg='Unauthorised access !')) 
+    
+    trek = Trek.query.filter_by(id=trek_id).first()
+
+    book = Booking.query.filter_by(trek_id=trek_id, user_id=u_id).first()
+
+    if book:
+        return redirect(url_for('user_treks', msg='You have already booked for '+ trek.trek_name +'. Please check the Booking tab.'))
+
+    else:
+        if trek.available_slots != 0:
+            book = Booking(
+                user_id = u_id,
+                trek_id = trek_id,
+            )
+
+            trek.available_slots -= 1
+
+            db.session.add(book)
+            db.session.commit()
+
+            return redirect(url_for('user_treks', msg='Your have been temporarily allocated a slot for '+ trek.trek_name +'. Please make the necessary payments to confirm your booking in the Booking tabs.'))
 
 
+        else:
+            return redirect(url_for('user_treks', msg='All Slots for '+ trek.trek_name +' are filled. Please contact the Admin or the respective staff for assistance.'))
+            
+
+@app.route('/user/treks/history', methods=['GET'])
+def user_history():
+    u_id = session.get('u_id',None)
+    if u_id is None:
+        return redirect(url_for('user_login', msg='Unauthorised access !')) 
+
+    if request.method == 'GET':
+        treks = Trek.query.all()
+        booking = Booking.query.filter_by(user_id=u_id, booking_status='Confirmed').all()
+
+        his_trek = []
+        for trek in treks:
+            for book in booking:
+                if trek.id == book.trek_id:
+                    his_trek.append(trek)
+                
+        return render_template('user_dashboard.html', func='trek_history', completed_treks=his_trek)
     
+@app.route('/user/bookings', methods=['GET'])
+def user_bookings():
+    u_id = session.get('u_id',None)
+    if u_id is None:
+        return redirect(url_for('user_login', msg='Unauthorised access !')) 
+    
+    bookings = Booking.query.filter_by(user_id=u_id).all()
+    return render_template('user_dashboard.html', func='bookings', bookings=bookings)
+
+@app.route('/user/profile', methods=['GET'])
+def user_profile():
+    u_id = session.get('u_id',None)
+    if u_id is None:
+        return redirect(url_for('user_login', msg='Unauthorised access !')) 
+    
+    user = User.query.filter_by(user_id=u_id).first()
+
+    return render_template('user_dashboard.html', func='Profile', current_user=user)
+
+@app.route('/user/bookings/<booking_id>/confirm', methods=['POST'])
+def confirm_booking(booking_id):
+    book = Booking.query.filter_by(id=booking_id).first()
+    book.booking_status = 'Confirmed'
+    trek = Trek.query.filter_by(id=book.trek_id).first()
+
+    db.session.commit()
+
+    return redirect(url_for('user_bookings', msg='Your booking for '+ trek.trek_name+ ' is Confirmed'))
+
+@app.route('/user/bookings/<booking_id>/cancel', methods=['POST'])
+def cancel_booking(booking_id):
+    book = Booking.query.filter_by(id=booking_id).first()
+    trek = Trek.query.filter_by(id=book.trek_id).first()
+    trek.available_slots += 1
+    db.session.delete(book)
+    db.session.commit()
+
+    return redirect(url_for('user_bookings', msg='Your booking for '+ trek.trek_name+ ' is Cancelled'))
+
 
 
 

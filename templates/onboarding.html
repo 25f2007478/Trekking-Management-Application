@@ -21,7 +21,9 @@
                         <br>
                         <input type="submit" value="Sign In">
                     </form>
-                    <p>{{ msg }}</p>
+                    {% if msg %}
+                    <p style="color: #ac0000; margin-bottom: 20px; font-weight: bold; font-size: 1rem;">{{ msg }}</p>
+                    {% endif %}
                     <p>Not a Staff ? <a href = "/staff_apply">Apply now !</a></p>
                 </div>
             </div>
@@ -39,7 +41,9 @@
                         <br>
                         <input type="submit" value="Sign In">
                     </form>
-                    <p>{{ msg }}</p>
+                    {% if msg %}
+                    <p style="color: #ac0000; margin-bottom: 20px; font-weight: bold; font-size: 1rem;">{{ msg }}</p>
+                    {% endif %}
                     <p>Don't have an Account ? <a href = "/signup">Create one now !</a></p>
                 </div>
             </div>
@@ -73,7 +77,9 @@
                         <br>
                         <input type="submit" value="Sign Up">
                     </form>
-                    <p>{{ msg }}</p>
+                    {% if msg %}
+                    <p style="color: #ac0000; margin-bottom: 20px; font-weight: bold; font-size: 1rem;">{{ msg }}</p>
+                    {% endif %}
                     <p>Already have an Account ? <a href = "/">Sign in now !</a></p>
                 </div>
             </div>
@@ -112,7 +118,9 @@
                         <br>
                         <input type="submit" value="Apply">
                     </form>
-                    <p>{{ msg }}</p>
+                    {% if msg %}
+                    <p style="color: #ac0000; margin-bottom: 20px; font-weight: bold; font-size: 1rem;">{{ msg }}</p>
+                    {% endif %}
                     <p>Already have an Account ? <a href = "/staff_login">Sign in now !</a></p>
                 </div>
             </div>

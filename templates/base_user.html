@@ -9,14 +9,15 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">Welcome Admin !!</div>
+        <div class="nav-brand">Welcome User !!</div>
         <div class="nav-links">
-            <a href="{{ url_for('admin_home') }}">Home</a>
-            <a href="{{ url_for('admin_staff') }}">Staff Management</a>
-            <a href="{{ url_for('admin_user') }}">User Management</a>
-            <a href="{{ url_for('admin_trek') }}">Manage Treks</a>
-            <a href="{{ url_for('admin_booking') }}">Bookings</a>
+            <a href="{{ url_for('user_home') }}">Home</a>
+            <a href="{{ url_for('user_treks') }}">Open Treks</a>
+            <a href="{{ url_for('user_history') }}"> Trek History</a>
+            <a href="{{ url_for('user_bookings') }}">Bookings</a>
+            <a href="{{ url_for('user_profile') }}">Profile</a>
             <a href="{{ url_for('logout') }}">Logout</a>
+            
         </div>
     </nav>
 

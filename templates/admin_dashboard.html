@@ -246,7 +246,7 @@
                                         </form>
 
                                         <form action="{{ url_for('delete_trek', trek_id=trek.id) }}" method="POST" style="display:inline-block;">
-                                            <button type="submit" class="action-btn btn-fire">Delete</button>
+                                            <button type="submit" class="action-btn btn-fire">Cancel</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -325,18 +325,157 @@
                         </tbody>
                     </table>
                 {% endif %}
+                <br><br>
+                {% if cancelled_treks %}
+                    <h2 style="margin-bottom: 25px; color: #1e5c45;">Cancelled Treks:</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Difficulty</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Available Slots</th>
+                                <th>Assigned Staffs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trek in cancelled_treks %}
+                                <tr>
+                                    <td>{{ trek.id }}</td>
+                                    <td>{{ trek.trek_name }}</td>
+                                    <td>{{ trek.location }}</td>
+                                    <td>{{ trek.difficulty }}</td>
+                                    <td>{{ trek.start_date }}</td>
+                                    <td>{{ trek.end_date }}</td>
+                                    <td>{{ trek.available_slots }}</td>
+                                    <td>{{ trek.staff_profile.user.name }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             </section>
+        </main>
+
+    {% elif func == 'bookings' %}
+        <main>
+            {% if bookings %}
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Pending Bookings:</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User Name</th>
+                            <th>Trek Name</th>
+                            <th>Trek Location</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Available Slots</th>
+                            <th>Booking Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                            {% if booking.booking_status == 'Pending' %}
+                                <tr>
+                                    <td>{{ booking.id }}</td>
+                                    <td>{{ booking.user.name }}</td>
+                                    <td>{{ booking.trek.trek_name }}</td>
+                                    <td>{{ booking.trek.location }}</td>
+                                    <td>{{ booking.trek.start_date }}</td>
+                                    <td>{{ booking.trek.end_date }}</td>
+                                    <td>{{ booking.trek.available_slots }}</td>
+                                    <td>{{ booking.booking_date }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                </section>
+                <section>
+            {% if bookings %}
+                <h2 style="margin-bottom: 25px; color: #1e5c45;">Confirmed Bookings:</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User Name</th>
+                            <th>Trek Name</th>
+                            <th>Trek Location</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Available Slots</th>
+                            <th>Trek Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                            {% if booking.booking_status == 'Confirmed' %}
+                                <tr>
+                                    <td>{{ booking.id }}</td>
+                                    <td>{{ booking.user.name }}</td>
+                                    <td>{{ booking.trek.trek_name }}</td>
+                                    <td>{{ booking.trek.location }}</td>
+                                    <td>{{ booking.trek.start_date }}</td>
+                                    <td>{{ booking.trek.end_date }}</td>
+                                    <td>{{ booking.trek.available_slots }}</td>
+                                    <td>{{ booking.trek.status }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </section>
+            {% else %}
+            <div class="empty-state-card">
+                <h3>No Bookings Found !</h3><br>
+                <p>No Pending or Completed bookings yet. When a booking is made, it will appear right here.</p>
+            </div>
+            {% endif %}
         </main>
     {% else %}
         <div class="dashboard-layout">
-        
-        <div class="chart-card">
-            <div style="text-align: center;">
-                <h3>System Overview</h3>
-                <p style="color: gray; margin-top: 20px;">[ Will be added soon.... ]</p>
-            </div>
-        </div>
 
+        <div class="chart-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0e6ed; padding-bottom: 15px; margin-bottom: 15px; flex-direction: column;">
+                <h3 style="margin: 0; color: #1e5c45;">Recent Bookings</h3>
+                <a href="/admin_dashboard/bookings" style="font-size: 0.9rem; color: #3498db; text-decoration: none; font-weight: bold;">View All</a>
+            </div>
+
+            {% if recent_activity %}
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px; color: #d7a237; font-size: 0.85rem; text-transform: uppercase;">User</th>
+                            <th style="padding: 10px; color: #d7a237; font-size: 0.85rem; text-transform: uppercase;">Trek</th>
+                            <th style="padding: 10px; color: #d7a237; font-size: 0.85rem; text-transform: uppercase;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_activity %}
+                            <tr style="border-bottom: 1px solid #f1f2f6;">
+                                <td style="padding: 12px 10px; font-weight: bold; color: #2c3e50;">{{ booking.user.name }}</td>
+                                <td style="padding: 12px 10px; color: #34495e;">{{ booking.trek.trek_name }}</td>
+                                <td style="padding: 12px 10px;">
+                                    {% if booking.booking_status == 'Confirmed' %}
+                                        <span style="background-color: #e8f8f5; color: #2ecc71; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Confirmed</span>
+                                    {% else %}
+                                        <span style="background-color: #fef9e7; color: #f1c40f; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="text-align: center; padding: 40px 0; color: #7f8c8d;">
+                    <p>No recent activity to display.</p>
+                </div>
+            {% endif %}
+        </div>
         <div class="stats-grid">
             
             <div class="stat-card">
@@ -356,7 +495,7 @@
 
             <div class="stat-card">
                 <h3>Total Bookings</h3>
-                <div class="stat-number">24</div>
+                <div class="stat-number">{{ total_bookings }}</div>
             </div>
 
         </div>
