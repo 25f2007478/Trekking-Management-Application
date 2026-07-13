@@ -405,6 +405,45 @@ def admin_booking():
     
     return render_template('admin_dashboard.html', func='bookings', bookings=bookings)
 
+@app.route("/admin_dashboard/search", methods=['GET'])
+def admin_search():
+    u_id = session.get('u_id',None)
+    if isadmin(u_id):
+        return redirect(url_for('user_login', msg='Unauthorised access !'))
+    
+    search_query = request.args.get('search')
+    treks = []
+    staff = []
+    user = []
+
+    if search_query:
+            formatted_query = f"%{search_query}%"
+            
+            treks = Trek.query.filter(
+                or_(
+                    Trek.trek_name.ilike(formatted_query),
+                    Trek.location.ilike(formatted_query)
+                )
+            ).all()
+
+            staff = User.query.filter(
+                User.role == 'staff',
+                or_(
+                    User.user_id.ilike(formatted_query),
+                    User.name.ilike(formatted_query)
+                )
+            ).all()
+
+            user = User.query.filter(
+                User.role == 'trekker',
+                or_(
+                    User.user_id.ilike(formatted_query),
+                    User.name.ilike(formatted_query),
+                )
+            ).all()
+    
+    return render_template('admin_dashboard.html', func='search', treks=treks, staffs=staff, users=user, search_query=search_query)
+
 
 #--------STAFF FUNCTIONALITIES--------#
 
@@ -551,24 +590,37 @@ def user_home():
 
     return render_template('user_dashboard.html', total_treks=com_trek, total_bookings=total_booking, pending_bookings=pending_booking, bookings=bookings, ongoing_treks=ongoing_treks)
 
-@app.route('/user/treks', methods=['GET','POST'])
+@app.route('/user/treks', methods=['GET'])
 def user_treks():
     u_id = session.get('u_id',None)
     if u_id is None:
         return redirect(url_for('user_login', msg='Unauthorised access !')) 
 
-    if request.method == 'GET':
-        treks = Trek.query.filter_by(status='Open').all()
 
-        passed_msg = request.args.get('msg')
-                
-        return render_template('user_dashboard.html', func='open_trek', treks=treks, msg=passed_msg)
+    passed_msg = request.args.get('msg')
+    search_query = request.args.get('search')
+
+    if search_query:
+            formatted_query = f"%{search_query}%"
+            
+            treks = Trek.query.filter(
+                Trek.status not in  ['Cancelled', 'Completed'],
+                or_(
+                    Trek.trek_name.ilike(formatted_query),
+                    Trek.location.ilike(formatted_query)
+                )
+            ).all()
+    else:
+        treks = Trek.query.all()
+            
+    return render_template('user_dashboard.html', func='open_trek', treks=treks, msg=passed_msg, search_query=search_query)
 
 @app.route('/trek/book/<int:trek_id>', methods=['POST'])
 def book_treks(trek_id):
     u_id = session.get('u_id',None)
     if u_id is None:
         return redirect(url_for('user_login', msg='Unauthorised access !')) 
+    
     
     trek = Trek.query.filter_by(id=trek_id).first()
 
@@ -620,8 +672,10 @@ def user_bookings():
     if u_id is None:
         return redirect(url_for('user_login', msg='Unauthorised access !')) 
     
+    passed_msg = request.args.get('msg')
+    
     bookings = Booking.query.filter_by(user_id=u_id).all()
-    return render_template('user_dashboard.html', func='bookings', bookings=bookings)
+    return render_template('user_dashboard.html', func='bookings', bookings=bookings, msg=passed_msg)
 
 @app.route('/user/profile', methods=['GET'])
 def user_profile():
@@ -636,12 +690,20 @@ def user_profile():
 @app.route('/user/bookings/<booking_id>/confirm', methods=['POST'])
 def confirm_booking(booking_id):
     book = Booking.query.filter_by(id=booking_id).first()
-    book.booking_status = 'Confirmed'
+    
     trek = Trek.query.filter_by(id=book.trek_id).first()
+    if trek.status == 'Open':
+        book.booking_status = 'Confirmed'
+        db.session.commit()
 
-    db.session.commit()
+        return redirect(url_for('user_bookings', msg='Your booking for '+ trek.trek_name+ ' is Confirmed !'))
+    
+    else:
+        db.session.delete(book)
 
-    return redirect(url_for('user_bookings', msg='Your booking for '+ trek.trek_name+ ' is Confirmed'))
+        db.session.commit()
+
+        return redirect(url_for('user_bookings', msg='Your booking for '+ trek.trek_name+ ' cannot be completed because the trek is not open now !'))
 
 @app.route('/user/bookings/<booking_id>/cancel', methods=['POST'])
 def cancel_booking(booking_id):

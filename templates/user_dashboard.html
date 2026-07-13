@@ -68,6 +68,57 @@
         <p>Currently no treks are open for you. When the Admin opens new treks, they will appear right here.</p>
     </div>
     {% endif %}
+    <br><br>
+
+    {% if treks %}
+    <h1>Ongoing Treks</h1>
+        {% for trek in treks %}
+            {% if trek.status == 'Ongoing' %}
+            <div class="staff-trek-card">
+                <div class="trek-image-box">
+                    <img src={{ trek.img }} alt="Trek Image">
+                </div>
+                
+                <div class="trek-info-box">
+                    <h1 class="trek-title">{{ trek.trek_name }}</h1>
+
+                        <div class="info-grid">
+                            
+                            <div class="info-item">
+                                <label>Location</label>
+                                <div class="read-only-text">{{ trek.location }}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Difficulty</label>
+                                <div class="read-only-text">{{ trek.difficulty }}</div>
+                            </div>
+
+                            
+                            <div class="info-item">
+                                <label>Available Slots</label>
+                                <div class="read-only-text">{{ trek.available_slots }}</div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Current Status</label>
+                                <div class="read-only-text status-badge">{{ trek.status }}</div>
+                            </div>
+
+                            <div class="info-item">
+                                <label>Start Date</label>
+                                <div class="read-only-text">{{ trek.start_date }}</div>
+                            </div>
+
+                            <div class="info-item">
+                                <label>End Date</label>
+                                <div class="read-only-text">{{ trek.end_date }}</div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 </main>
 
 {% elif func == 'trek_history' %}
@@ -174,6 +225,9 @@
 
 {% elif func == 'bookings' %}
 <main>
+    {% if msg %}
+        <p style="color: #ac0000; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 1rem;">{{ msg }}</p>
+    {% endif %}
     {% if bookings %}
         <h2 style="margin-bottom: 25px; color: #1e5c45;">Pending Bookings:</h2>
         <table>
@@ -271,13 +325,13 @@
                             <h3 style="margin: 0; color: #1e5c45; font-size: 1.5rem;">{{ next_trip.trek_name }}</h3>
                             <span style="background-color: #2ecc71; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold;">Confirmed</span>
                         </div>
-                        
-                        <p style="color: #7f8c8d; margin-bottom: 20px; font-size: 1rem;">
+
+                        <p style="color: #7f8c8d; margin-bottom: 20px; font-size: 1rem; text-align: left;">
                             📍 {{ next_trip.location }} <br>
                             🗓️ Starts: {{ next_trip.start_date }}
                         </p>
                         
-                        <a href="{{ url_for('user_treks') }}" style="display: inline-block; background-color: #d97736; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        <a href="{{ url_for('user_treks', search=next_trip.trek_name) }}" style="display: inline-block; background-color: #d97736; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
                             View Details
                         </a>
                     </div>
