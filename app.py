@@ -561,7 +561,7 @@ def edit_profile():
         user.gender = request.form.get('gender')
         user.mobile = request.form.get('mobile')
 
-        db.commit()
+        db.session.commit()
 
         if user.role == 'staff':
             return redirect(url_for('staff_profile'))
